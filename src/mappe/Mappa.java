@@ -85,7 +85,7 @@ public class Mappa {
 
 		generaMappa();
 		
-		//int stop = 0;
+		int stop = 0;
 	}
 
 	/**
