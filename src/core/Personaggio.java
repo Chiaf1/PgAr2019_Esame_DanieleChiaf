@@ -80,20 +80,14 @@ public class Personaggio {
 	}
 
 	/**
-	 * metodo per modificare la vita del personaggio va indicato la quantita da
-	 * modificare e se è un incremento di vita o no
+	 * metodo per modificare la vita del personaggio
 	 * 
 	 * @param _quantity (quantita' di vita da modificare)
-	 * @param _isInc    (true se la vita va incrementata, false se va decrementata)
 	 * @return (true se è stato possibile modificare la vita, false se la vita ha
 	 *         raggiunto lo zero)
 	 */
-	public boolean modVita(int _quantity, boolean _isInc) {
-		if (_isInc) {
-			vita = vita + _quantity;
-			return true;
-		}
-		vita = vita - _quantity;
+	public boolean modVita(int _quantity) {
+		vita = vita + (_quantity);
 		if (vita <= 0) {
 			return false;
 		}

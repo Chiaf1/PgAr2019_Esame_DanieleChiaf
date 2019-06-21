@@ -17,9 +17,9 @@ public class Cella {
 	 */
 	public int tipo;
 	/**
-	 * ArrayList Contenente le celle collegate
+	 * ArrayList Contenente l'id delle celle collegate
 	 */
-	private ArrayList<Cella> bivio = new ArrayList<>();
+	private ArrayList<Bivio> bivio = new ArrayList<>();
 	/**
 	 * descrizione/testo appartenente alla casella
 	 */
@@ -32,9 +32,10 @@ public class Cella {
 	/**
 	 * costrutture della classe cella che inizializza l'id, il tipo e la descrizione
 	 * 
-	 * @param _id   (id da assegnare)
-	 * @param _tipo (tipologia della cella)
-	 * @param _desc (descrizione della cella)
+	 * @param _id     (id da assegnare)
+	 * @param _tipo   (tipologia della cella)
+	 * @param _desc   (descrizione della cella)
+	 * @param _azione (testo informativo sulla stanza)
 	 */
 	public Cella(int _id, int _tipo, String _desc) {
 		id = _id;
@@ -61,11 +62,11 @@ public class Cella {
 	}
 
 	/**
-	 * ritona le casella collegate alla casella attuale
+	 * ritona i collegamenti della casella
 	 * 
 	 * @return (caselle adiacenti)
 	 */
-	public ArrayList<Cella> getBivio() {
+	public ArrayList<Bivio> getBivio() {
 		return bivio;
 	}
 
@@ -79,12 +80,11 @@ public class Cella {
 	}
 
 	/**
-	 * metodo per l'aggiunta di una cella al bivio della casella attuale (ricorda il
-	 * .clone)
+	 * metodo per l'aggiunta di una cella al bivio della casella attuale
 	 * 
-	 * @param _newCell (clone della cella da aggiungere)
+	 * @param _newCell (id della cella adiacente da aggiungere)
 	 */
-	public void addBivio(Cella _newCell) {
+	public void addBivio(Bivio _newCell) {
 		bivio.add(_newCell);
 	}
 }
