@@ -220,7 +220,7 @@ public class Mappa implements Comparable<Mappa> {
 			if (cell.getNome().equals(TAG_MAP_CELL_DESCRIPTION)) {
 				for (StrutturaDati text : cell.getAttributi()) {
 					if (text.isText()) {
-						return text.getNome();
+						return text.getNome().trim();
 					}
 				}
 			}
@@ -238,7 +238,7 @@ public class Mappa implements Comparable<Mappa> {
 	private String getIntroduzione(StrutturaDati _cell) {
 		for (StrutturaDati testo : _cell.getAttributi()) {
 			if (testo.isText()) {
-				return testo.getNome();
+				return testo.getNome().trim();
 			}
 		}
 		return null;

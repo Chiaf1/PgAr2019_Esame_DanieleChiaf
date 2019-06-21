@@ -2,6 +2,7 @@ package mappe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class CollezioneMappe {
 	/**
@@ -22,14 +23,16 @@ public class CollezioneMappe {
 	 */
 	public CollezioneMappe() {
 		// acquisisci tutte le mappe
-		percorsi.add("/mappe/1) base.xml");
-		
+		percorsi.add("mappe/1) base.xml");
+		percorsi.add("mappe/2) D1.xml");
+		percorsi.add("mappe/3) D3.xml");
+		percorsi.add("mappe/4) D1 + D3.xml");
 
 		for (String path : percorsi) {
 			Mappa newMappa = new Mappa(path);
 			mappe.add(newMappa);
 		}
-		//sort();
+		Collections.sort(mappe);
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class CollezioneMappe {
 	 * @return
 	 */
 	public boolean selezioneMappa(int _index) {
-		if (!(_index>=0 && _index < mappe.size())) {
+		if (!(_index >= 0 && _index < mappe.size())) {
 			return false;
 		}
 		mappaInUso = mappe.get(_index);
@@ -67,12 +70,26 @@ public class CollezioneMappe {
 		return mappaInUso;
 	}
 
-	public void aggiungiMappa() {
-
+	/**
+	 * metodo per l'aggiunta di una mappa
+	 * 
+	 * @param _path
+	 */
+	public void aggiungiMappa(Mappa _map) {
+		mappe.add(_map);
+		percorsi.add(_map.getFilePath());	
+		Collections.sort(mappe);
 	}
 
-	public void rimuoviMappa() {
-
+	/**
+	 * metodo che rimuove la mappa all'indice _index
+	 * 
+	 * @param _index
+	 */
+	public void rimuoviMappa(int _index) {
+		percorsi.remove(_index);
+		mappe.remove(_index);
+		Collections.sort(mappe);
 	}
 
 	/**
@@ -82,8 +99,8 @@ public class CollezioneMappe {
 	 * @return
 	 */
 	public Cella getCellaById(int _id) {
-		for (Cella cell: mappaInUso.getCelle()) {
-			if (cell.getId()==_id) {
+		for (Cella cell : mappaInUso.getCelle()) {
+			if (cell.getId() == _id) {
 				return cell;
 			}
 		}

@@ -2,6 +2,7 @@ package core;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import mappe.*;
 
@@ -46,7 +47,6 @@ public class Menu {
 	private void intro() {
 		// descrizione gioco balle varie
 		String msg = "Benvenuti ";
-
 		System.out.println(msg);
 	}
 
@@ -58,15 +58,8 @@ public class Menu {
 		String nomeP = letturaString("\nPer prima cosa ti chiedo di inserire il nome del tuo personaggio");
 		player = new Personaggio(nomeP);
 
-		scrivi("Ottimo " + nomeP
-				+ " ora devo chiederti quale mappa vorresti giocare?\nscegli tra le alternative seguenti:\n");
-		scrivi(mappe.toString());
-
-		int indexMappa = letturaInt("Inserisci qui il numero della mappa: ");
-		while (!mappe.selezioneMappa(indexMappa)) {
-			scrivi("Ops,\nsembrerebbe esserci un porblema con la selezione sei sicuro di aver inserito un numero presente nell'elenco?\nPerfavore reinserisci\n");
-			indexMappa = letturaInt("Prego reinserisci: ");
-		}
+		scrivi("Ottimo " + nomeP + ", ");
+		mapMenu();
 
 		scrivi("\nOttimo il setUp della partita e' stato completato,\nora è il momento di inziare la partita");
 
@@ -82,8 +75,9 @@ public class Menu {
 			intro();
 
 			setUp();
-			
-			//core
+			aspetta();
+
+			// core
 			while (true) {
 				scrivi("\n\n\n");
 				Cella cellaAtt = mappe.getCellaById(player.getIdCasellaAttuale());
@@ -91,7 +85,9 @@ public class Menu {
 					break;
 				}
 				scrivi("La vita attuale di " + player.getNome() + " e' " + player.getVita() + ";");
+				aspetta();
 				scrivi(cellaAtt.getDescrizione());
+				aspetta();
 				scrivi("\nLe opzioni sono: ");
 				for (int i = 0; i < cellaAtt.getBivio().size(); i++) {
 					scrivi("_" + i + " " + cellaAtt.getBivio().get(i).getIntroduzione() + "\n");
@@ -101,23 +97,75 @@ public class Menu {
 					scrivi("\nMi spiace ma il numero che hai inserito non si riferisce a nessun opzione possibile");
 					scelta = letturaInt("\nScegli ancora: ");
 				}
+				aspetta();
 				Bivio bivSelected = cellaAtt.getBivio().get(scelta);
 				if (bivSelected.hasAnEffect()) {
 					int effetto = bivSelected.getEffetto();
 					scrivi("\nLa cella in cui ti trovavi era una cella effetto quindi: ");
 					if (effetto < 0) {
 						scrivi("perdi " + effetto + " punti vita");
-					}else {
+					} else {
 						scrivi("guadagni  " + effetto + " punti vita");
 					}
 					player.modVita(bivSelected.getEffetto());
-				}else {
+				} else {
 					scrivi("La cella non aveva effetti avanzi senza problemi");
 				}
 				player.setIdCasellaAttuale(bivSelected.getIdColl());
+				aspetta();
 			}
 		} while (finale(isLoser));
 
+	}
+
+	/**
+	 * metodo per gestire tutta la parte riguardante le mappe
+	 */
+	public void mapMenu() {
+		aspetta();
+		scrivi("ora devo chiederti quale mappa vorresti giocare?\nscegli tra le alternative seguenti:\n");
+		scrivi(mappe.toString());
+		int scelta = letturaInt(
+				"\nSe la mappa che vuoi giocare non è presente nell'elnco e la vuoi aggiungere inserisci \"-1\""
+						+ "\nse invece vuoi eliminarne una inserisci \"-2\""
+						+ "\nse invece vuoi giocare una mappa già presente premi \"0\"" + "\ninserisci qui: ");
+		if (scelta < 0) {
+			if (scelta > -2) {
+				String path = letturaString("Ok, apprezzo l'iniziativa, prego inserisci il percorso del file: ");
+				while (!(testMappa(path))) {
+					scrivi("C'è stato un problema con l'aggiunta della tua mappa,");
+					path = letturaString("prego reinserisci il percorso");
+				}
+				Mappa newMap = new Mappa(path);
+				mappe.aggiungiMappa(newMap);
+				mapMenu();
+			} else {
+				scrivi(mappe.toString());
+				int daElim = letturaInt("Per selezionare quale mappa eliminare inserisci il suo numero");
+				mappe.rimuoviMappa(daElim);
+				mapMenu();
+			}
+			int indexMappa = letturaInt("Inserisci qui il numero della mappa: ");
+			while (!mappe.selezioneMappa(indexMappa)) {
+				scrivi("Ops,\nsembrerebbe esserci un porblema con la selezione sei sicuro di aver inserito un numero presente nell'elenco?\nPerfavore reinserisci\n");
+				indexMappa = letturaInt("Prego reinserisci: ");
+			}
+		}
+	}
+
+	/**
+	 * metodo per testare il percorso del file
+	 * 
+	 * @param _path
+	 * @return
+	 */
+	private boolean testMappa(String _path) {
+		try {
+			Mappa newMap = new Mappa(_path);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -129,8 +177,10 @@ public class Menu {
 	 */
 	private boolean finale(boolean _isLoser) {
 		scrivi("\n-------------------------------Fine Partita-------------------------------");
+		aspetta();
 
 		scrivi("\nLa partita e' ora finita, ");
+		aspetta();
 		if (_isLoser) {
 			scrivi(player.getNome()
 					+ " purtroppo sei morto prima di arrivare alla fine della mappa, e non poi vedere il bellissimo banner della vittora,\ncomunque non abbatterti perche' puoi ritentarela e magari stavolta riuscirai ad arrivare alla fine.");
@@ -140,6 +190,7 @@ public class Menu {
 					+ "\nse ri sei divertito puoi ricominciare la partita e magari scegliere una mappa più difficile, oppure puoi anche divertiriti a creare la tua mappa personalizzata e caricarla.");
 		}
 
+		aspetta();
 		int restart = letturaInt("\nAllora? cosa hai deciso?\n_0 chiudi il programma;\n_1 tenti una nuova partita");
 
 		while (!(restart <= 1 && restart >= 0)) {
@@ -199,6 +250,17 @@ public class Menu {
 			}
 		} while (!finito);
 		return valoreLetto;
+	}
+
+	/**
+	 * metodo privato che mette in pausa l'esecuzione del programma per 1 secondo
+	 */
+	private void aspetta() {
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (Exception e) {
+
+		}
 	}
 
 }
