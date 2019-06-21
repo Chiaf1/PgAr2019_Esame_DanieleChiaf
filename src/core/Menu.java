@@ -85,7 +85,7 @@ public class Menu {
 				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_FINALE) {
 					break;
 				}
-				int men = letturaInt("vuoi visualizzare l'inventario? ");
+				int men = letturaInt("vuoi visualizzare l'inventario? se si inserisci 1");
 				if (men == 1) {
 					if (player.getOggetti().size()>0) {
 						scrivi("Ecco i tuoi oggetti");
