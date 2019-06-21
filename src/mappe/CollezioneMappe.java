@@ -1,6 +1,7 @@
 package mappe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CollezioneMappe {
 	/**
@@ -16,8 +17,27 @@ public class CollezioneMappe {
 	 */
 	private Mappa mappaInUso;
 
+	/**
+	 * 
+	 */
 	public CollezioneMappe() {
 		// acquisisci tutte le mappe
+		percorsi.add("");
+		percorsi.add("");
+		percorsi.add("");
+
+		for (String path : percorsi) {
+			Mappa newMappa = new Mappa(path);
+			mappe.add(newMappa);
+		}
+		sort();
+	}
+
+	/**
+	 * 
+	 */
+	public void menuMappa() {
+
 	}
 
 	/**
@@ -25,6 +45,10 @@ public class CollezioneMappe {
 	 */
 	@Override
 	public String toString() {
+		StringBuffer msg = new StringBuffer("Le mappe presenti al momento sono le seguenti: ");
+		for (int i = 0; i < mappe.size(); i++) {
+
+		}
 		return null;
 	}
 
@@ -52,6 +76,28 @@ public class CollezioneMappe {
 	}
 
 	public void rimuoviMappa() {
+
+	}
+
+	/**
+	 * ritonra la cella con l'id inserito
+	 * 
+	 * @param _id
+	 * @return
+	 */
+	public Cella getCellaById(int _id) {
+		for (Cella cell: mappaInUso.getCelle()) {
+			if (cell.getId()==_id) {
+				return cell;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * metodo che riordina la lista di mappe dall più piccola alla più grande
+	 */
+	private void sort() {
 
 	}
 

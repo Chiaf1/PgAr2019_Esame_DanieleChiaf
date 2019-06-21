@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import XMLManager.*;
 
-public class Mappa {
+public class Mappa implements Comparable<Mappa> {
 	/*
 	 * ----COSTANTI----
 	 */
 	private static final String TAG_MAP_CELL_DESCRIPTION = "description";
-	
+
 	private static final String TAG_MAP_CELL_CONNECTION_EFFECT = "lifepoints";
 
 	private static final String TAG_CELL_TYPE_END = "end";
@@ -33,11 +33,11 @@ public class Mappa {
 	private static final String TAG_MAP_MAP = "map";
 
 	private static final String TAG_MAP_TITLE = "title";
-	
+
 	/*
 	 * ------------ATTRIBUTI------------
 	 */
-	
+
 	/**
 	 * collezione delle celle della mappa
 	 */
@@ -45,19 +45,19 @@ public class Mappa {
 	/**
 	 * indicatore del tipo della cella vuota
 	 */
-	private static final int TAG_C_VUOTA = 1;
+	public static final int TAG_C_VUOTA = 1;
 	/**
 	 * indicatore del tipo della cella scelta
 	 */
-	private static final int TAG_C_SCELTA = 2;
+	public static final int TAG_C_SCELTA = 2;
 	/**
 	 * indicatore del tipo della cella effetto
 	 */
-	private static final int TAG_C_EFFETTO = 3;
+	public static final int TAG_C_EFFETTO = 3;
 	/**
 	 * indicatore del tipo della cella finale
 	 */
-	private static final int TAG_C_FINALE = 4;
+	public static final int TAG_C_FINALE = 4;
 	/**
 	 * stringa contenente l'indirizzo del file sorgente della mappa
 	 */
@@ -84,7 +84,7 @@ public class Mappa {
 		filePath = _filePath;
 
 		generaMappa();
-		
+
 		int stop = 0;
 	}
 
@@ -107,6 +107,15 @@ public class Mappa {
 	}
 
 	/**
+	 * ritorna le celle della mappa
+	 * 
+	 * @return
+	 */
+	public ArrayList<Cella> getCelle() {
+		return celle;
+	}
+
+	/**
 	 * metodo per la generazione della mappa
 	 */
 	private void generaMappa() {
@@ -115,13 +124,13 @@ public class Mappa {
 		StrutturaDati file = decoder.getFile();
 
 		// creazione della mappa seguendo il sorgente
-		for (StrutturaDati map: file.getAttributi()) {
-			if(map.getNome().equals(TAG_MAP_MAP)) {
+		for (StrutturaDati map : file.getAttributi()) {
+			if (map.getNome().equals(TAG_MAP_MAP)) {
 				nomeMappa = map.getTag(TAG_MAP_TITLE);
 			}
 		}
-		
-		//creo tutte le celle
+
+		// creo tutte le celle
 		for (StrutturaDati map : file.getAttributi()) {
 			if (map.getNome().equals(TAG_MAP_MAP)) {
 				for (StrutturaDati cell : map.getAttributi()) {
@@ -137,20 +146,20 @@ public class Mappa {
 		}
 
 		for (StrutturaDati map : file.getAttributi()) {
-			//attributi di rpg
+			// attributi di rpg
 			if (map.getNome().equals(TAG_MAP_MAP)) {
 				for (StrutturaDati cell : map.getAttributi()) {
-					//attributi di map
+					// attributi di map
 					if (cell.getNome().equals(TAG_MAP_CELL)) {
-						//acquisizione cella attuale
+						// acquisizione cella attuale
 						int idCellaAtt = Integer.valueOf(cell.getTag(TAG_MAP_CELL_ID));
 						Cella cellaAtt = cercaCella(idCellaAtt);
 						for (StrutturaDati bivio : cell.getAttributi()) {
-							//attributi della cella
-							if (bivio.getNome().equals(TAG_MAP_CELL_OPTION)) {//se l'attributo e' un opzione
+							// attributi della cella
+							if (bivio.getNome().equals(TAG_MAP_CELL_OPTION)) {// se l'attributo e' un opzione
 								int idBivio = Integer.valueOf(bivio.getTag(TAG_MAP_CELL_OPTION_DESTINATION));
 								String intro = getIntroduzione(bivio);
-								//set effetto se necessario ovvero la cella è una cella effetto
+								// set effetto se necessario ovvero la cella è una cella effetto
 								if (cellaAtt.getTipo() == TAG_C_EFFETTO) {
 									int effetto = getEffetto(bivio);
 									Bivio newBivio = new Bivio(intro, idBivio, true, effetto);
@@ -227,7 +236,7 @@ public class Mappa {
 	 * @return
 	 */
 	private String getIntroduzione(StrutturaDati _cell) {
-		for (StrutturaDati testo: _cell.getAttributi()) {
+		for (StrutturaDati testo : _cell.getAttributi()) {
 			if (testo.isText()) {
 				return testo.getNome();
 			}
@@ -248,5 +257,33 @@ public class Mappa {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * metodo per la presentazione della mappa
+	 */
+	@Override
+	public String toString() {
+		String msg = ("\n" + nomeMappa + " - " + filePath + " ;");
+		return msg;
+	}
+
+	/**
+	 * ritorna un valore minore di zero se il numero di caselle della classe è più
+	 * basso di quella di o, un valore positivo se la classe un numero più alto di
+	 * celle
+	 * 
+	 * @param o
+	 * @return
+	 */
+	@Override
+	public int compareTo(Mappa o) {
+		if (celle.size() < o.getCelle().size()) {
+			return -1;
+		}
+		if (celle.size() > o.getCelle().size()) {
+			return 1;
+		}
+		return 0;
 	}
 }

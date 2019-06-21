@@ -3,13 +3,13 @@ package core;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import mappe.CollezioneMappe;
+import mappe.*;
 
 public class Menu {
 	/*
 	 * ---------ATTRIBUTI---------
 	 */
-	
+
 	private static final String BANNER_VITTORIA = "";
 
 	/**
@@ -61,6 +61,7 @@ public class Menu {
 		scrivi("\nOttimo " + nomeP
 				+ " ora devo chiederti cquale mappa vorresti giocare?,\nscegli tra le alternative seguenti:\n");
 		mappe.toString();
+
 		int indexMappa = letturaInt("Inserisci qui il numero della mappa: ");
 		while (!mappe.selezioneMappa(indexMappa)) {
 			scrivi("\nOps,\nsembrerebbe esserci un porblema con la selezione sei sicuro di aver inserito un numero presente nell'elenco?\nPerfavore reinserisci\n");
@@ -75,6 +76,43 @@ public class Menu {
 	 * metodo per la gestione della partita nel suo complesso
 	 */
 	public void avventura() {
+		boolean isLoser = false;
+		do {
+			intro();
+
+			setUp();
+			
+			//core
+			while (true) {
+				scrivi("\n\n\n");
+				Cella cellaAtt = mappe.getCellaById(player.getIdCasellaAttuale());
+				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_FINALE) {
+					break;
+				}
+				scrivi("La vita attuale di " + player.getNome() + " e' " + player.getVita() + ";");
+				scrivi(cellaAtt.getDescrizione());
+				scrivi("\nLe opzioni sono: ");
+				for (int i = 0; i < cellaAtt.getBivio().size(); i++) {
+					scrivi(i + " " + cellaAtt.getBivio().get(i).getIntroduzione() + "\n");
+				}
+				int scelta = letturaInt("Cosa scegli: ");
+				while (scelta < cellaAtt.getBivio().size() && scelta >= 0) {
+					scrivi("\nMi spiace ma il numero che hai inserito non si riferisce a nessun opzione possibile");
+					scelta = letturaInt("\nScegli ancora: ");
+				}
+				Bivio bivSelected = cellaAtt.getBivio().get(scelta);
+				if (bivSelected.hasAnEffect()) {
+					int effetto = bivSelected.getEffetto();
+					scrivi("\nLa cella in cui ti trovavi era una cella effetto quindi: ");
+					if (effetto < 0) {
+						scrivi("perdi " + effetto + "punti vita");
+					}else {
+						scrivi("guadagni  " + effetto + "punti vita");
+					}
+					player.modVita(bivSelected.getEffetto());
+				}
+			}
+		} while (finale(isLoser));
 
 	}
 
@@ -104,21 +142,12 @@ public class Menu {
 			scrivi("\nHey, sei arrivato fino a qui e sbagli ad inserire i dati nell'ultimo menu??");
 			restart = letturaInt("\nDai reinserisci la tua risposta: ");
 		}
-		
+
 		if (restart == 1) {
 			return true;
 		}
-		
+
 		return false;
-	}
-
-	/**
-	 * metodo per la gestione del bivio
-	 * 
-	 * @return
-	 */
-	public int bivioEncounter() {
-
 	}
 
 	/**
