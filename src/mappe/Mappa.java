@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import XMLManager.*;
 
 public class Mappa implements Comparable<Mappa> {
+	private static final String OBJ_POSITIVE = "yes";
+
+	private static final String TAG_CELL_HAS_OBG = "hasObj";
+
 	/*
 	 * ----COSTANTI----
 	 */
@@ -20,9 +24,15 @@ public class Mappa implements Comparable<Mappa> {
 
 	private static final String TAG_CELL_TYPE_EMPTY = "empty";
 
+	private static final String TAG_CELL_TYPE_LOOT = "loot";
+
+	private static final String TAG_CELL_TYPE_GATE = "gate";
+
 	private static final String TAG_MAP_CELL_OPTION_DESTINATION = "destination";
 
 	private static final String TAG_MAP_CELL_OPTION = "option";
+	
+	private static final String TAG_MAP_CELL_OBJECT = "object";
 
 	private static final String TAG_MAP_CELL_TYPE = "type";
 
@@ -58,6 +68,14 @@ public class Mappa implements Comparable<Mappa> {
 	 * indicatore del tipo della cella finale
 	 */
 	public static final int TAG_C_FINALE = 4;
+	/**
+	 * indicatore del tipo della cella finale
+	 */
+	public static final int TAG_C_GATE = 5;
+	/**
+	 * indicatore del tipo della cella finale
+	 */
+	public static final int TAG_C_LOOT = 6;
 	/**
 	 * stringa contenente l'indirizzo del file sorgente della mappa
 	 */
@@ -139,42 +157,72 @@ public class Mappa implements Comparable<Mappa> {
 						int tipo = getTipo(cell.getTag(TAG_MAP_CELL_TYPE));
 						String desc = getDescrizione(cell);
 						Cella newCella = new Cella(id, tipo, desc);
+						if (tipo == TAG_C_GATE || tipo == TAG_C_LOOT) {// nel caso la casella sia un gate
+							newCella.setOggetto(getOggetto(cell));
+							if (tipo == TAG_C_LOOT) {//creazione bivio anomalo l
+								Bivio biv = new Bivio("", Integer.valueOf(cell.getTag(TAG_MAP_CELL_OPTION_DESTINATION)),false, 0, true);
+								newCella.addBivio(biv);
+							}
+						}
 						celle.add(newCella);
+
 					}
 				}
 			}
 		}
 
+		// creazione dei bivi
 		for (StrutturaDati map : file.getAttributi()) {
-			// attributi di rpg
+			// ciclo gli attributi di rpg
 			if (map.getNome().equals(TAG_MAP_MAP)) {
 				for (StrutturaDati cell : map.getAttributi()) {
-					// attributi di map
+					// ciclo gli attributi di map
 					if (cell.getNome().equals(TAG_MAP_CELL)) {
 						// acquisizione cella attuale
 						int idCellaAtt = Integer.valueOf(cell.getTag(TAG_MAP_CELL_ID));
 						Cella cellaAtt = cercaCella(idCellaAtt);
 						for (StrutturaDati bivio : cell.getAttributi()) {
-							// attributi della cella
+							// ciclo gli attributi della cella
 							if (bivio.getNome().equals(TAG_MAP_CELL_OPTION)) {// se l'attributo e' un opzione
 								int idBivio = Integer.valueOf(bivio.getTag(TAG_MAP_CELL_OPTION_DESTINATION));
 								String intro = getIntroduzione(bivio);
 								// set effetto se necessario ovvero la cella è una cella effetto
 								if (cellaAtt.getTipo() == TAG_C_EFFETTO) {
+									boolean hasObj = false;
 									int effetto = getEffetto(bivio);
-									Bivio newBivio = new Bivio(intro, idBivio, true, effetto);
+									if (bivio.getTag().containsKey(TAG_CELL_HAS_OBG)) {
+										if (bivio.getTag(TAG_CELL_HAS_OBG).equals(OBJ_POSITIVE)) {
+											hasObj = true;
+										}
+									}
+									Bivio newBivio = new Bivio(intro, idBivio, true, effetto, hasObj);
 									cellaAtt.addBivio(newBivio);
 								} else {
-									Bivio newBivio = new Bivio(intro, idBivio, false, 0);
+									boolean hasObj = false;
+									if (bivio.getTag().containsKey(TAG_CELL_HAS_OBG)) {
+										if (bivio.getTag(TAG_CELL_HAS_OBG).equals(OBJ_POSITIVE)) {
+											hasObj = true;
+										}
+									}
+									
+									Bivio newBivio = new Bivio(intro, idBivio, false, 0, hasObj);
 									cellaAtt.addBivio(newBivio);
 								}
-
 							}
+
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * metodo che ritorna l'oggetto della cella quando è nel formato StrutturaDati
+	 * @return
+	 */
+	private String getOggetto(StrutturaDati _cell){
+		return _cell.getTag(TAG_MAP_CELL_OBJECT);
 	}
 
 	/**
@@ -195,6 +243,12 @@ public class Mappa implements Comparable<Mappa> {
 		}
 		if (_type.equals(TAG_CELL_TYPE_END)) {
 			return TAG_C_FINALE;
+		}
+		if (_type.equals(TAG_CELL_TYPE_LOOT)) {
+			return TAG_C_LOOT;
+		}
+		if (_type.equals(TAG_CELL_TYPE_GATE)) {
+			return TAG_C_GATE;
 		}
 		return TAG_C_VUOTA;
 	}

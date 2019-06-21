@@ -24,6 +24,14 @@ public class Cella {
 	 * descrizione/testo appartenente alla casella
 	 */
 	private String descrizione;
+	/**
+	 * flag se posside l'oggetto
+	 */
+	private boolean hasObj = false;
+	/**
+	 * oggetto della casella
+	 */
+	private String oggetto;
 
 	/*
 	 * ------------METODI------------
@@ -80,11 +88,50 @@ public class Cella {
 	}
 
 	/**
+	 * ritorna l'oggetto della classe
+	 * 
+	 * @return
+	 */
+	public String getOggetto() {
+		return oggetto;
+	}
+
+	/**
+	 * prende l'oggeto della cella e lo rimuove
+	 * 
+	 * @return
+	 */
+	public String getAndRremove() {
+		String ret = oggetto;
+		oggetto = null;
+		return ret;
+	}
+
+	/**
+	 * ritorna il valore del flag hasObj
+	 * 
+	 * @return
+	 */
+	public boolean hasObj() {
+		return hasObj;
+	}
+
+	/**
 	 * metodo per l'aggiunta di una cella al bivio della casella attuale
 	 * 
 	 * @param _newCell (id della cella adiacente da aggiungere)
 	 */
 	public void addBivio(Bivio _newCell) {
 		bivio.add(_newCell);
+	}
+
+	/**
+	 * metodo per settare l'oggetto della cella
+	 * 
+	 * @param _oggetto
+	 */
+	public void setOggetto(String _oggetto) {
+		oggetto = _oggetto;
+		hasObj = true;
 	}
 }

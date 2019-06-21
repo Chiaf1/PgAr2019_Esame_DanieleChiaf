@@ -1,10 +1,12 @@
 package core;
 
+import java.util.ArrayList;
+
 public class Personaggio {
 	/*
 	 * ------------ATTRIBUTI------------
 	 */
-	
+
 	/**
 	 * quantità di vita attuale del personaggio
 	 */
@@ -25,6 +27,10 @@ public class Personaggio {
 	 * nome del personaggio
 	 */
 	private String nome;
+	/**
+	 * inventario del giocatore
+	 */
+	private ArrayList<String> Oggetti = new ArrayList<String>();
 
 	/*
 	 * ----------METODI----------
@@ -77,6 +83,24 @@ public class Personaggio {
 	 */
 	public String getNome() {
 		return nome;
+	}
+
+	/**
+	 * ritorna gli oggetti all'interno dell'inventario
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getOggetti() {
+		return Oggetti;
+	}
+
+	/**
+	 * aggiungi un oggetto all'inventario
+	 * 
+	 * @param oggetti
+	 */
+	public void addOggetto(String _ogg) {
+		Oggetti.add(_ogg);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package mappe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class CollezioneMappe {
@@ -99,19 +98,11 @@ public class CollezioneMappe {
 	 * @return
 	 */
 	public Cella getCellaById(int _id) {
-		for (Cella cell : mappaInUso.getCelle()) {
-			if (cell.getId() == _id) {
-				return cell;
+		for (int i = 0; i<mappaInUso.getCelle().size();i++) {
+			if (mappaInUso.getCelle().get(i).getId() == _id) {
+				return mappaInUso.getCelle().get(i);
 			}
 		}
 		return null;
 	}
-
-	/**
-	 * metodo che riordina la lista di mappe dall più piccola alla più grande
-	 */
-	private void sort() {
-
-	}
-
 }

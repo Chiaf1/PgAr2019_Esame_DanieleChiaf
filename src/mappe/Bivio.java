@@ -17,6 +17,10 @@ public class Bivio {
 	 * effetto del bivio
 	 */
 	private int effetto;
+	/**
+	 * se il bivio ha bisogno di un oggetto
+	 */
+	private boolean hasObject;
 
 	/**
 	 * costruttore per la classe bivio dove inizializzo tutte le variabili
@@ -26,11 +30,12 @@ public class Bivio {
 	 * @param _hasAnEffect
 	 * @param _effetto
 	 */
-	public Bivio(String _intro, int _idColl, boolean _hasAnEffect, int _effetto) {
+	public Bivio(String _intro, int _idColl, boolean _hasAnEffect, int _effetto, boolean _hasObj) {
 		introduzione = _intro;
 		idColl = _idColl;
 		hasAnEffect = _hasAnEffect;
 		effetto = _effetto;
+		hasObject = _hasObj;
 	}
 
 	/**
@@ -69,4 +74,12 @@ public class Bivio {
 		return hasAnEffect;
 	}
 
+	/**
+	 * ritona il flag hasObj
+	 * 
+	 * @return
+	 */
+	public boolean hasObj() {
+		return hasObject;
+	}
 }

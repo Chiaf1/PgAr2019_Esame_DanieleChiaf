@@ -46,7 +46,8 @@ public class Menu {
 	 */
 	private void intro() {
 		// descrizione gioco balle varie
-		String msg = "Benvenuti ";
+		String msg = "Benvenuti nel primo GDR di casa chiaf," + "\nspero che l'esperienza vi piaccia..."
+				+ "\n buon divertimento";
 		System.out.println(msg);
 	}
 
@@ -84,10 +85,13 @@ public class Menu {
 				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_FINALE) {
 					break;
 				}
+				// msg vita att
 				scrivi("La vita attuale di " + player.getNome() + " e' " + player.getVita() + ";");
 				aspetta();
+				// descizione cella
 				scrivi(cellaAtt.getDescrizione());
 				aspetta();
+				// ozioni:
 				scrivi("\nLe opzioni sono: ");
 				for (int i = 0; i < cellaAtt.getBivio().size(); i++) {
 					scrivi("_" + i + " " + cellaAtt.getBivio().get(i).getIntroduzione() + "\n");
@@ -98,8 +102,9 @@ public class Menu {
 					scelta = letturaInt("\nScegli ancora: ");
 				}
 				aspetta();
+				// assegnazione strada scelta
 				Bivio bivSelected = cellaAtt.getBivio().get(scelta);
-				if (bivSelected.hasAnEffect()) {
+				if (bivSelected.hasAnEffect()) {// controllo se la cella ha un effetto ed eventuale branch
 					int effetto = bivSelected.getEffetto();
 					scrivi("\nLa cella in cui ti trovavi era una cella effetto quindi: ");
 					if (effetto < 0) {
@@ -111,8 +116,42 @@ public class Menu {
 				} else {
 					scrivi("La cella non aveva effetti avanzi senza problemi");
 				}
+				// set delle prossima cella
 				player.setIdCasellaAttuale(bivSelected.getIdColl());
 				aspetta();
+				cellaAtt = mappe.getCellaById(player.getIdCasellaAttuale());
+				// nel caso in cui la cella sia gate o loot
+				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_GATE) {// se la cella è gate
+					if (player.getOggetti().size() > 0) {
+						for (String obj : player.getOggetti()) {
+							if (obj.equals(cellaAtt.getOggetto())) {
+								scrivi("hey, hai trovato la cella gate che combacia con il tuo oggetto " + obj
+										+ ",\navanzi su un percorso alternativo");
+								for (Bivio biv : cellaAtt.getBivio()) {
+									if (biv.hasObj()) {
+										player.setIdCasellaAttuale(biv.getIdColl());
+									}
+								}
+							} else {
+								for (Bivio biv : cellaAtt.getBivio()) {
+									if (!biv.hasObj()) {
+										player.setIdCasellaAttuale(biv.getIdColl());
+									}
+								}
+							}
+						}
+					}
+				}
+				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_LOOT) {// se la cella è loot
+					scrivi("Che fortuna hai trovato una casella loot, ");
+					if (cellaAtt.hasObj()) {// se possiede ancora l'oggetto lo prende
+						scrivi("hai ottenuto un/a " + cellaAtt.getOggetto());
+						player.addOggetto(cellaAtt.getAndRremove());
+					} else {//altrimenti no
+						scrivi("purtroppo o per fortuna l'hai già loottata quindi non prendi nulla");
+						player.setIdCasellaAttuale(cellaAtt.getBivio().get(0).getIdColl());
+					}
+				}
 			}
 		} while (finale(isLoser));
 
@@ -122,28 +161,32 @@ public class Menu {
 	 * metodo per gestire tutta la parte riguardante le mappe
 	 */
 	public void mapMenu() {
-		aspetta();
-		scrivi("ora devo chiederti quale mappa vorresti giocare?\nscegli tra le alternative seguenti:\n");
-		scrivi(mappe.toString());
-		int scelta = letturaInt(
-				"\nSe la mappa che vuoi giocare non è presente nell'elnco e la vuoi aggiungere inserisci \"-1\""
-						+ "\nse invece vuoi eliminarne una inserisci \"-2\""
-						+ "\nse invece vuoi giocare una mappa già presente premi \"0\"" + "\ninserisci qui: ");
-		if (scelta < 0) {
-			if (scelta > -2) {
-				String path = letturaString("Ok, apprezzo l'iniziativa, prego inserisci il percorso del file: ");
-				while (!(testMappa(path))) {
-					scrivi("C'è stato un problema con l'aggiunta della tua mappa,");
-					path = letturaString("prego reinserisci il percorso");
+		boolean isTrovata = false;
+		while (!isTrovata) {
+			isTrovata = true;
+			aspetta();
+			scrivi("ora devo chiederti quale mappa vorresti giocare?\nscegli tra le alternative seguenti:\n");
+			scrivi(mappe.toString());
+			int scelta = letturaInt(
+					"\nSe la mappa che vuoi giocare non è presente nell'elnco e la vuoi aggiungere inserisci \"-1\""
+							+ "\nse invece vuoi eliminarne una inserisci \"-2\""
+							+ "\nse invece vuoi giocare una mappa già presente premi \"0\"" + "\ninserisci qui: ");
+			if (scelta < 0) {
+				if (scelta > -2) {
+					String path = letturaString("Ok, apprezzo l'iniziativa, prego inserisci il percorso del file: ");
+					while (!(testMappa(path))) {
+						scrivi("C'è stato un problema con l'aggiunta della tua mappa,");
+						path = letturaString("prego reinserisci il percorso");
+					}
+					Mappa newMap = new Mappa(path);
+					mappe.aggiungiMappa(newMap);
+					isTrovata = false;
+				} else {
+					scrivi(mappe.toString());
+					int daElim = letturaInt("Per selezionare quale mappa eliminare inserisci il suo numero");
+					mappe.rimuoviMappa(daElim);
+					isTrovata = false;
 				}
-				Mappa newMap = new Mappa(path);
-				mappe.aggiungiMappa(newMap);
-				mapMenu();
-			} else {
-				scrivi(mappe.toString());
-				int daElim = letturaInt("Per selezionare quale mappa eliminare inserisci il suo numero");
-				mappe.rimuoviMappa(daElim);
-				mapMenu();
 			}
 			int indexMappa = letturaInt("Inserisci qui il numero della mappa: ");
 			while (!mappe.selezioneMappa(indexMappa)) {
