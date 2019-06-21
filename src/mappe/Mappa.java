@@ -84,6 +84,8 @@ public class Mappa {
 		filePath = _filePath;
 
 		generaMappa();
+		
+		//int stop = 0;
 	}
 
 	/**
@@ -113,7 +115,11 @@ public class Mappa {
 		StrutturaDati file = decoder.getFile();
 
 		// creazione della mappa seguendo il sorgente
-		nomeMappa = file.getTag(TAG_MAP_TITLE);
+		for (StrutturaDati map: file.getAttributi()) {
+			if(map.getNome().equals(TAG_MAP_MAP)) {
+				nomeMappa = map.getTag(TAG_MAP_TITLE);
+			}
+		}
 		
 		//creo tutte le celle
 		for (StrutturaDati map : file.getAttributi()) {
@@ -191,12 +197,7 @@ public class Mappa {
 	 * @return
 	 */
 	private int getEffetto(StrutturaDati _cell) {
-		for (StrutturaDati cell : _cell.getAttributi()) {
-			if (cell.getNome().equals(TAG_MAP_CELL_OPTION)) {
-				return Integer.valueOf(cell.getTag(TAG_MAP_CELL_CONNECTION_EFFECT));
-			}
-		}
-		return 0;
+		return Integer.valueOf(_cell.getTag(TAG_MAP_CELL_CONNECTION_EFFECT));
 	}
 
 	/**
@@ -226,13 +227,9 @@ public class Mappa {
 	 * @return
 	 */
 	private String getIntroduzione(StrutturaDati _cell) {
-		for (StrutturaDati cell : _cell.getAttributi()) {
-			if (cell.getNome().equals(TAG_MAP_CELL_OPTION)) {
-				for (StrutturaDati text : cell.getAttributi()) {
-					if (text.isText()) {
-						return text.getNome();
-					}
-				}
+		for (StrutturaDati testo: _cell.getAttributi()) {
+			if (testo.isText()) {
+				return testo.getNome();
 			}
 		}
 		return null;
