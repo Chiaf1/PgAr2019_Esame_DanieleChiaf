@@ -85,6 +85,17 @@ public class Menu {
 				if (cellaAtt.getTipo() == mappe.getMappaInUso().TAG_C_FINALE) {
 					break;
 				}
+				int men = letturaInt("vuoi visualizzare l'inventario? ");
+				if (men == 1) {
+					if (player.getOggetti().size()>0) {
+						scrivi("Ecco i tuoi oggetti");
+						for (String obj: player.getOggetti()) {
+							scrivi("_" + obj);
+						}
+					}else {
+						scrivi("mi spiace non hai ancora oggetti");
+					}
+				}
 				// msg vita att
 				scrivi("La vita attuale di " + player.getNome() + " e' " + player.getVita() + ";");
 				aspetta();
