@@ -22,22 +22,14 @@ public class CollezioneMappe {
 	 */
 	public CollezioneMappe() {
 		// acquisisci tutte le mappe
-		percorsi.add("");
-		percorsi.add("");
-		percorsi.add("");
+		percorsi.add("/mappe/1) base.xml");
+		
 
 		for (String path : percorsi) {
 			Mappa newMappa = new Mappa(path);
 			mappe.add(newMappa);
 		}
-		sort();
-	}
-
-	/**
-	 * 
-	 */
-	public void menuMappa() {
-
+		//sort();
 	}
 
 	/**
@@ -45,11 +37,11 @@ public class CollezioneMappe {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer msg = new StringBuffer("Le mappe presenti al momento sono le seguenti: ");
+		String msg = new String("Le mappe presenti al momento sono le seguenti: ");
 		for (int i = 0; i < mappe.size(); i++) {
-
+			msg = msg + ("\n_" + i + " " + mappe.get(i).toString());
 		}
-		return null;
+		return msg;
 	}
 
 	/**
@@ -59,7 +51,11 @@ public class CollezioneMappe {
 	 * @return
 	 */
 	public boolean selezioneMappa(int _index) {
-
+		if (!(_index>=0 && _index < mappe.size())) {
+			return false;
+		}
+		mappaInUso = mappe.get(_index);
+		return true;
 	}
 
 	/**

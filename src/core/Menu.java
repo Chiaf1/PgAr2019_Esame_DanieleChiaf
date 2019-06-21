@@ -58,13 +58,14 @@ public class Menu {
 		String nomeP = letturaString("\nPer prima cosa ti chiedo di inserire il nome del tuo personaggio");
 		player = new Personaggio(nomeP);
 
-		scrivi("\nOttimo " + nomeP
-				+ " ora devo chiederti cquale mappa vorresti giocare?,\nscegli tra le alternative seguenti:\n");
-		mappe.toString();
+		scrivi("Ottimo " + nomeP
+				+ " ora devo chiederti quale mappa vorresti giocare?\nscegli tra le alternative seguenti:\n");
+		scrivi(mappe.toString());
 
 		int indexMappa = letturaInt("Inserisci qui il numero della mappa: ");
 		while (!mappe.selezioneMappa(indexMappa)) {
-			scrivi("\nOps,\nsembrerebbe esserci un porblema con la selezione sei sicuro di aver inserito un numero presente nell'elenco?\nPerfavore reinserisci\n");
+			scrivi("Ops,\nsembrerebbe esserci un porblema con la selezione sei sicuro di aver inserito un numero presente nell'elenco?\nPerfavore reinserisci\n");
+			indexMappa = letturaInt("Prego reinserisci: ");
 		}
 
 		scrivi("\nOttimo il setUp della partita e' stato completato,\nora è il momento di inziare la partita");
@@ -93,10 +94,10 @@ public class Menu {
 				scrivi(cellaAtt.getDescrizione());
 				scrivi("\nLe opzioni sono: ");
 				for (int i = 0; i < cellaAtt.getBivio().size(); i++) {
-					scrivi(i + " " + cellaAtt.getBivio().get(i).getIntroduzione() + "\n");
+					scrivi("_" + i + " " + cellaAtt.getBivio().get(i).getIntroduzione() + "\n");
 				}
 				int scelta = letturaInt("Cosa scegli: ");
-				while (scelta < cellaAtt.getBivio().size() && scelta >= 0) {
+				while (!(scelta < cellaAtt.getBivio().size() && scelta >= 0)) {
 					scrivi("\nMi spiace ma il numero che hai inserito non si riferisce a nessun opzione possibile");
 					scelta = letturaInt("\nScegli ancora: ");
 				}
@@ -105,12 +106,15 @@ public class Menu {
 					int effetto = bivSelected.getEffetto();
 					scrivi("\nLa cella in cui ti trovavi era una cella effetto quindi: ");
 					if (effetto < 0) {
-						scrivi("perdi " + effetto + "punti vita");
+						scrivi("perdi " + effetto + " punti vita");
 					}else {
-						scrivi("guadagni  " + effetto + "punti vita");
+						scrivi("guadagni  " + effetto + " punti vita");
 					}
 					player.modVita(bivSelected.getEffetto());
+				}else {
+					scrivi("La cella non aveva effetti avanzi senza problemi");
 				}
+				player.setIdCasellaAttuale(bivSelected.getIdColl());
 			}
 		} while (finale(isLoser));
 
@@ -138,7 +142,7 @@ public class Menu {
 
 		int restart = letturaInt("\nAllora? cosa hai deciso?\n_0 chiudi il programma;\n_1 tenti una nuova partita");
 
-		while (restart <= 1 && restart >= 0) {
+		while (!(restart <= 1 && restart >= 0)) {
 			scrivi("\nHey, sei arrivato fino a qui e sbagli ad inserire i dati nell'ultimo menu??");
 			restart = letturaInt("\nDai reinserisci la tua risposta: ");
 		}

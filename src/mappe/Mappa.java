@@ -264,7 +264,7 @@ public class Mappa implements Comparable<Mappa> {
 	 */
 	@Override
 	public String toString() {
-		String msg = ("\n" + nomeMappa + " - " + filePath + " ;");
+		String msg = (nomeMappa + " - " + filePath + " ;\n");
 		return msg;
 	}
 
